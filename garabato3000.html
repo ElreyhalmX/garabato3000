@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Garabato 3000</title>
+  
+  <!-- Icono para Añadir a Pantalla de Inicio (PWA / iOS / Android) -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%23C6CA53'/><text x='50%' y='53%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='220' fill='%23555358'>G3k</text></svg>">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%23C6CA53'/><text x='50%' y='53%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='220' fill='%23555358'>G3k</text></svg>">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background-color: #555358; 
+      color: #F3F4F6;
+    }
+    .font-garabato { 
+      font-family: 'Caveat', cursive; 
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#C6CA53] selection:text-[#555358]">
+
+  <!-- Header -->
+  <header class="bg-[#4A484C]/80 backdrop-blur border-b border-[#7B7263]/30 sticky top-0 z-10">
+    <div class="max-w-xl mx-auto px-4 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-[#C6CA53] text-[#555358] font-garabato text-2xl font-bold flex items-center justify-center rounded-xl shadow">
+          G3k
+        </div>
+        <div>
+          <h1 class="font-garabato text-3xl font-bold text-[#C6CA53] tracking-wide leading-none">Garabato 3000</h1>
+          <p class="text-[11px] text-[#C9DCB3] opacity-90 mt-0.5">Esteganografía segura entre panas</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-xl mx-auto px-4 py-5 w-full flex-grow space-y-4">
+    
+    <!-- Navigation Tabs -->
+    <div class="grid grid-cols-2 gap-2 p-1.5 bg-[#4A484C] rounded-2xl shadow-inner">
+      <button id="tab-encode" onclick="switchTab('encode')" class="py-2 font-semibold text-sm rounded-xl transition flex items-center justify-center gap-2 bg-[#C6CA53] text-[#555358] shadow">
+        🔒 Codificar
+      </button>
+      <button id="tab-decode" onclick="switchTab('decode')" class="py-2 font-semibold text-sm rounded-xl transition flex items-center justify-center gap-2 text-slate-300 hover:text-white">
+        🔓 Descifrar
+      </button>
+    </div>
+
+    <!-- ENCODER PANEL -->
+    <div id="panel-encode" class="space-y-4">
+      <div class="bg-[#5F6062] rounded-2xl p-4.5 space-y-3 shadow-md">
+        <div class="flex justify-between items-center">
+          <label class="text-xs font-semibold text-[#C9DCB3] uppercase tracking-wider">Tu Mensaje Secreto</label>
+          <span class="text-[11px] text-slate-300">Oculta letras y números</span>
+        </div>
+        
+        <textarea id="input-secret" rows="3" placeholder="Ejemplo: Papi está quedando arrechísimo el garabato 3000" 
+          class="w-full bg-[#4A484C] border border-[#7B7263]/50 rounded-xl p-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#C6CA53] transition resize-none text-sm"></textarea>
+        
+        <div class="flex items-center gap-2 pt-1">
+          <span class="text-xs text-slate-300 shrink-0">Estilo:</span>
+          <select id="select-style" class="w-full bg-[#4A484C] border border-[#7B7263]/50 rounded-xl py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-[#C6CA53]">
+            <option value="mixto" selected>Mixto (Risas + Tecladazo loco)</option>
+            <option value="risas">Solo Risas (jajaja, jejeje)</option>
+            <option value="teclado">Solo Teclado (fghjkl, asdfg)</option>
+          </select>
+        </div>
+
+        <button onclick="encodeMessage()" class="w-full py-3 bg-[#C6CA53] hover:bg-[#b8bc47] text-[#555358] font-bold rounded-xl shadow transition active:scale-[0.99] font-garabato text-2xl tracking-wide mt-1">
+          ⚡ Generar Garabato
+        </button>
+      </div>
+
+      <!-- Result ENCODER -->
+      <div class="bg-[#5F6062] rounded-2xl p-4.5 space-y-3 shadow-md">
+        <span class="text-xs font-semibold text-[#C9DCB3] uppercase tracking-wider block">● Texto Camuflado</span>
+        
+        <textarea id="output-encoded" readonly rows="3" placeholder="El garabato aparecerá aquí..." 
+          class="w-full bg-[#4A484C] border border-[#7B7263]/50 rounded-xl p-3 font-garabato text-xl text-[#C9DCB3] focus:outline-none resize-none leading-relaxed"></textarea>
+        
+        <button onclick="copyToClipboard('output-encoded')" class="w-full py-2.5 bg-[#7B7263]/50 hover:bg-[#7B7263] text-slate-100 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
+          📋 Copiar Garabato
+        </button>
+
+        <!-- WhatsApp Direct Buttons -->
+        <div class="grid grid-cols-2 gap-2 pt-1 border-t border-[#7B7263]/30">
+          <button onclick="sendWhatsApp('jose')" class="py-2.5 bg-emerald-600/90 hover:bg-emerald-600 text-white font-medium text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5">
+            💬 Enviar a José
+          </button>
+          <button onclick="sendWhatsApp('hector')" class="py-2.5 bg-emerald-700/90 hover:bg-emerald-700 text-white font-medium text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5">
+            💬 Enviar a Héctor
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DECODER PANEL -->
+    <div id="panel-decode" class="hidden space-y-4">
+      <div class="bg-[#5F6062] rounded-2xl p-4.5 space-y-3 shadow-md">
+        <label class="text-xs font-semibold text-[#C9DCB3] uppercase tracking-wider block">Garabato Recibido</label>
+        
+        <textarea id="input-encoded" rows="3" placeholder="Pega aquí el texto camuflado..." 
+          class="w-full bg-[#4A484C] border border-[#7B7263]/50 rounded-xl p-3 font-garabato text-lg text-white placeholder-slate-400 focus:outline-none focus:border-[#C6CA53] transition resize-none"></textarea>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="pasteFromClipboard('input-encoded')" class="py-2.5 bg-[#7B7263]/50 hover:bg-[#7B7263] text-slate-100 font-semibold text-xs rounded-xl transition shadow-sm">
+            📋 Pegar Portapapeles
+          </button>
+          <button onclick="decodeMessage()" class="py-2.5 bg-[#C6CA53] hover:bg-[#b8bc47] text-[#555358] font-bold text-xs rounded-xl shadow transition">
+            🔓 Descifrar
+          </button>
+        </div>
+      </div>
+
+      <!-- Result DECODER -->
+      <div class="bg-[#5F6062] rounded-2xl p-4.5 space-y-3 shadow-md">
+        <span class="text-xs font-semibold text-[#C9DCB3] uppercase tracking-wider block">● Mensaje Revelado</span>
+        <div id="output-decoded" class="min-h-[70px] w-full bg-[#4A484C] border border-[#7B7263]/50 rounded-xl p-3.5 font-garabato text-2xl text-[#C9DCB3] font-bold break-words tracking-wide flex items-center">
+          <span class="opacity-60 text-base font-sans font-normal">(Esperando garabato...)</span>
+        </div>
+        <button onclick="copyDecodedText()" class="w-full py-2.5 bg-[#C9DCB3]/10 hover:bg-[#C9DCB3]/20 text-[#C9DCB3] font-semibold text-xs rounded-xl border border-[#C9DCB3]/30 transition flex items-center justify-center gap-2">
+          📋 Copiar Mensaje Revelado
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="py-3 text-center text-[11px] text-slate-300 bg-[#4A484C]/40 border-t border-[#7B7263]/20">
+    Garabato 3000 • Uso Exclusivo José & Héctor
+  </footer>
+
+  <script>
+    const PHONE_JOSE = "584244954759";
+    const PHONE_HECTOR = "584244197444";
+
+    function switchTab(tab) {
+      const encodeBtn = document.getElementById('tab-encode');
+      const decodeBtn = document.getElementById('tab-decode');
+      const encodePanel = document.getElementById('panel-encode');
+      const decodePanel = document.getElementById('panel-decode');
+
+      if (tab === 'encode') {
+        encodeBtn.className = "py-2 font-semibold text-sm rounded-xl transition flex items-center justify-center gap-2 bg-[#C6CA53] text-[#555358] shadow";
+        decodeBtn.className = "py-2 font-semibold text-sm rounded-xl transition flex items-center justify-center gap-2 text-slate-300 hover:text-white";
+        encodePanel.classList.remove('hidden');
+        decodePanel.classList.add('hidden');
+      } else {
+        decodeBtn.className = "py-2 font-semibold text-sm rounded-xl transition flex items-center justify-center gap-2 bg-[#C6CA53] text-[#555358] shadow";
+        encodeBtn.className = "py-2 font-semibold text-sm rounded-xl transition flex items-center justify-center gap-2 text-slate-300 hover:text-white";
+        decodePanel.classList.remove('hidden');
+        encodePanel.classList.add('hidden');
+      }
+    }
+
+    function getRandomNoise(length, style) {
+      const risas = ["jaja", "jajaja", "jeje", "ksks", "jajajaj", "ja", "sjsj"];
+      const teclado = "fghjklasdfgqwertyzxcvbnm";
+      let res = "";
+      
+      if (style === "risas") {
+        while (res.length < length) res += risas[Math.floor(Math.random() * risas.length)];
+        return res.substring(0, length);
+      }
+      
+      for (let i = 0; i < length; i++) {
+        res += teclado.charAt(Math.floor(Math.random() * teclado.length));
+      }
+      return res;
+    }
+
+    function encodeMessage() {
+      const secret = document.getElementById('input-secret').value.trim();
+      const style = document.getElementById('select-style').value;
+      const output = document.getElementById('output-encoded');
+
+      if (!secret) {
+        output.value = "";
+        return;
+      }
+
+      let result = getRandomNoise(Math.floor(Math.random() * 4) + 3, style);
+
+      for (let i = 0; i < secret.length; i++) {
+        let char = secret[i];
+        
+        if (char === ' ' || char === '\n') {
+          result += " " + getRandomNoise(Math.floor(Math.random() * 3) + 2, style);
+        } else {
+          result += char.toUpperCase() + getRandomNoise(Math.floor(Math.random() * 4) + 2, style);
+        }
+      }
+
+      output.value = result;
+    }
+
+    function decodeMessage() {
+      const encoded = document.getElementById('input-encoded').value;
+      const outputDiv = document.getElementById('output-decoded');
+
+      if (!encoded.trim()) {
+        outputDiv.innerHTML = '<span class="opacity-60 text-base font-sans font-normal">(Esperando garabato...)</span>';
+        return;
+      }
+
+      let words = encoded.split(/\s+/);
+
+      let decodedWords = words.map(word => {
+        let cleanWord = "";
+        for (let char of word) {
+          if ((char >= 'A' && char <= 'Z') || (char >= '0' && char <= '9') || 
+              ['Ñ', 'Á', 'É', 'Í', 'Ó', 'Ú', '?', '!', '¡', '¿'].includes(char)) {
+            cleanWord += char;
+          }
+        }
+        return cleanWord;
+      }).filter(w => w.length > 0);
+
+      outputDiv.innerText = decodedWords.join(" ");
+    }
+
+    document.getElementById('input-encoded').addEventListener('input', decodeMessage);
+
+    function copyToClipboard(id) {
+      const textarea = document.getElementById(id);
+      if (!textarea.value) return;
+      textarea.select();
+      navigator.clipboard.writeText(textarea.value);
+      alert("✨ ¡Garabato copiado al portapapeles!");
+    }
+
+    function copyDecodedText() {
+      const text = document.getElementById('output-decoded').innerText;
+      if (!text || text.includes("(Esperando")) return;
+      navigator.clipboard.writeText(text);
+      alert("✨ ¡Mensaje revelado copiado!");
+    }
+
+    async function pasteFromClipboard(id) {
+      try {
+        const text = await navigator.clipboard.readText();
+        document.getElementById(id).value = text;
+        decodeMessage();
+      } catch (err) {
+        alert("Por favor, concede permisos para acceder al portapapeles.");
+      }
+    }
+
+    function sendWhatsApp(recipient) {
+      const garabato = document.getElementById('output-encoded').value;
+      if (!garabato) {
+        alert("Primero escribe un mensaje y genera el garabato.");
+        return;
+      }
+      
+      const phone = recipient === 'jose' ? PHONE_JOSE : PHONE_HECTOR;
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(garabato)}`;
+      window.open(url, '_blank');
+    }
+  </script>
+</body>
+</html>
